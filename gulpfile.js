@@ -4,6 +4,7 @@ const csso = require( 'gulp-csso' );
 const rename = require( 'gulp-rename' );
 const cssBase64 = require( 'gulp-css-base64' );
 const concat = require( 'gulp-concat' );
+const connect = require( 'gulp-connect' );
 
 gulp.task( 'hello', function() {
   console.log( 'hello world!' );
@@ -29,4 +30,24 @@ gulp.task( 'optimize-css', function() {
     .pipe( gulp.dest( 'dst/css' ) );
 } );
 
+gulp.task( 'connect', function() {
+    connect.server( {
+        host: 'localhost',
+        root: 'src',
+        livereload: true,
+        port: 4500
+    } )
+} );
+
+gulp.task( 'html', function() {
+    gulp.src( './src/index.html' )
+        .pipe( connect.reload() );
+} );
+
+gulp.task( 'watch', function() {
+    gulp.watch( [ './src/index.html', './src/less/**/*.less'], [ 'css', 'html' ] );
+} );
+
 gulp.task( 'css', ['process-less', 'concat-css', 'optimize-css' ] );
+
+gulp.task( 'default', [ 'connect', 'watch' ] );
